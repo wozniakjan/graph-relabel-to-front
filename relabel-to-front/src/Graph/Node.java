@@ -1,14 +1,17 @@
 package Graph;
-import java.util.*;
 
 public class Node {
-    private List<Edge> edges;
-    private int _id;
+    //protected List<Edge> edges;
+    
+    protected int _id;
+    protected Node current_neighbour;
+    protected int height;
+    protected int excess;
     
     public Node(){
-        edges = new ArrayList();
+        //edges = new ArrayList();
     }
-    
+
     public void set_id(int id){
         _id = id;
     }
@@ -17,36 +20,19 @@ public class Node {
         return _id;
     }
     
-    public void add_edge(Edge e){
-        edges.add(e);
+    public void set_current_neighbour(Node n){
+        current_neighbour = n;
     }
     
-    public void remove_edge(int to_node_id){
-        for(Edge e : edges){
-            if(e.to().get_id() == to_node_id){
-                edges.remove(e);
-                return;
-            }
-        }
+    public Node get_current_neighbour(){
+        return current_neighbour;
     }
     
-    public List<Edge> get_edges(){
-        return edges;
+    public void set_height(int h){
+        height = h;
     }
     
-    public Edge has_edge(int to_node_id){
-        for(Edge e : edges){
-            if(e.to().get_id() == to_node_id){
-                return e;
-            }
-        }
-        return null;
-    }
-    
-    
-    public void delete(){
-        for(Edge e : edges){
-            e.delete();
-        }
+    public int get_height(){
+        return height;
     }
 }
