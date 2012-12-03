@@ -4,23 +4,63 @@ import java.util.*;
 
 public class RelabelToFrontGraph extends Graph {
     Node _source;
+    int _source_index;
     Node _sink;
+    int _sink_index;
     
-    int reversed_edge_id;
+    int n;
+    int[][] F;
+    int[][] C;
+    int[] height;
+    int[] excess;
+    int[] seen;    
+    int[] list;
     
-    Stack<Node> l;
+    Node[] index;
 
     private void initialize(Node source, Node sink){
-       // add_reversed_edges();
         _source = source;
         _sink = sink;
-        l = new Stack<>();
+
+        n = nodes.size();
+        F = new int[n][n];
+        C = new int[n][n];
+        height = new int[n];
+        excess = new int[n];
+        seen = new int[n];
+        list = new int[n-2];
         
-        for(Node n : nodes.values()){
-            n.set_height(0);
-            //if(n != _source && n != _sink){
-                l.add(n);
-            //}
+        index = new Node[n];
+        
+        int i_u = 0, li = 0;
+        for(Node u : nodes.values()){
+            u.set_height(0);
+            int i_v = 0;
+            for(Node v : nodes.values()){
+                F[i_u][i_v] = 0;
+                Edge e = get_edge(u, v);
+                if(e == null){
+                    C[i_u][i_v] = 0;
+                }
+                else {
+                    C[i_u][i_v] = e.get_capacity();
+                }
+                i_v++;
+            }
+            height[i_u]=0;
+            excess[i_u]=0;
+            seen[i_u]=0;
+            index[i_u] = u;
+            if(u!=_sink && u!=_source){
+                list[li++]=i_u;
+            }
+            if(u==_sink){
+                _sink_index = i_u;
+            }
+            if(u==_source){
+                _source_index = i_u;
+            }
+            i_u++;
         }
         
         for(Edge e : edges.values()){
@@ -32,112 +72,82 @@ public class RelabelToFrontGraph extends Graph {
         _source.set_height(nodes.size());
     }
     
-    /*protected void add_reversed_edges(){
-    }*/
-    
-    
     private int total_flow(){
         int sum = 0;
-        for(Edge e : edges.values()){
-            if(e.from()==_source){
-                sum += e.get_flow();
-            }
+        for(int i=0; i<n; i++){
+            sum+=F[_source_index][i];
         }
         return sum;
     }
     
+    public void shift_list(int si){
+        int aux = list[si];
+        
+        for(int i = si; i>=1; i--){
+            list[i] = list[i-1];
+        }
+        list[0] = aux;
+    }
+    
     public int do_the_trick(Node source, Node sink){
-        debug_msg("do_the_trick() -> initialize("+source.get_id()+","+sink.get_id()+")");
         initialize(source, sink);
-        int old_height;
+        height[_source_index] = n;
+        excess[_source_index] = Integer.MAX_VALUE;
         
-        debug_msg("do_the_trick() -> l.pop()");
-        Node u=l.pop();
-        
-        while(u!=null){
-            old_height = u.get_height();
-            debug_msg("do_the_trick() -> discharge()"); 
+        for(int v = 0; v<n; v++){
+            push(_source_index, v);
+        }
+ 
+        int p = 0, u, old_height;
+        while(p < list.length){
+            u = list[p];
+            old_height = height[u];
             discharge(u);
-            
-            if(u.get_height()>old_height){
-                debug_msg("do_the_trick() -> l.push()");
-                l.push(u);
+            if(height[u]>old_height){
+                shift_list(p);
+                p=0;
             }
-            else{
-                u=l.pop();
+            else {
+                p+=1;
             }
         }
         
         return total_flow();
     }
     
-    private void discharge(Node u){
-        while(is_active(u)){
-            for(Edge e : edges.values()){
-                if(e.from()==u){
-                    debug_msg("discharge() -> e == u");
-                    Node v = e.to();
-                    if(e.get_capacity()-e.get_flow()>0 && u.get_height()>v.get_height()){
-                        debug_msg("discharge() -> edge is admissable");
-                        push(u,v);
-                    }
-                }
-            }
-            relabel(u);
-        }
+    private void discharge(int u){
+       while(excess[u] > 0){
+           if(seen[u] < n){
+               int v = seen[u];
+               if((C[u][v]-F[u][v])>0 && height[u]>height[v]){
+                   push(u,v);
+               }
+               else {
+                   seen[u] += 1;
+               }
+           }
+           else{
+               relabel(u);
+               seen[u]=0;
+           }
+       }
     }
     
-    private int excess(Node u){
-        int in = 0;
-        int out = 0;
-        for(Edge e : edges.values()){
-            if(e.from() == u){
-                out += e.get_flow();
-            }
-            if(e.to() == u){
-                in += e.get_flow();
-            }
-        }
-        return in-out;
+    private void push(int u, int v){
+        int send = Math.min(excess[u], C[u][v] - F[u][v]);
+        F[u][v] += send;
+        F[v][u] -= send;
+        excess[u] -= send;
+        excess[v] += send;
     }
     
-    private void push(Node u, Node v){
-        Edge e = get_edge(u,v);
-        Edge reversed = get_edge(v,u);
-        int send = Math.min(excess(u), e.get_residual());
-        e.set_flow(e.get_flow()+send);
-        reversed.set_flow(reversed.get_flow()-send);
-        
-    }
-    
-    private void relabel(Node u){
+    private void relabel(int u){
         int min_height = Integer.MAX_VALUE;
-        for(Edge e : edges.values()){
-            if(e.from() == u){
-                Node v = e.to();
-                if((e.get_capacity()-e.get_flow())>0 && u.get_height()>v.get_height()){
-                    min_height = Math.min(min_height, v.get_height());
-                    u.set_height(min_height+1);
-                }
+        for(int v = 0; v<n; v++){
+            if((C[u][v] - F[u][v])>0){
+                min_height = Math.min(min_height, height[v]);
+                height[u] = min_height+1;
             }
         }
-    }
-    
-    private boolean is_active(Node n){
-        int in = 0;
-        int out = 0;
-        
-        for(Edge e : edges.values()){
-            if(e.from() == n){
-                out+=e.get_flow();
-            }
-            if(e.to() == n){
-                in+=e.get_flow();
-            }
-        }
-        if(in>out){
-            return true;
-        }
-        return false;
     }
 }
