@@ -25,6 +25,7 @@ public class Graph {
         nodes.put(node_id, n);
         return n;
     }
+    
     public void remove_node(int id){
         //nodes.get(id).delete();
         for(Edge e : edges.values()){
@@ -34,6 +35,19 @@ public class Graph {
         }
         nodes.remove(id);
     }
+    
+    public Node get_node(int id) {
+        return this.nodes.get(id);
+    }
+    
+    public Iterator get_nodes_iter() {
+        return this.nodes.entrySet().iterator();
+    }
+    
+    public int get_size() {
+        return this.nodes.size();
+    }
+    
     public void add_edge(Edge e){
         e.set_id(edge_id);
         //e.from().add_edge(e);
@@ -48,6 +62,11 @@ public class Graph {
             }
         }
     }
+    
+    public void remove_edge(int id) {
+        edges.remove(id);
+    }
+    
     public Edge get_edge(Node u, Node v){
         for(Edge e : edges.values()){
             if(e.from() == u && e.to() == v){
@@ -56,6 +75,15 @@ public class Graph {
         }
         return null;
     }
+    
+    public Edge get_edge(int id) {
+        return edges.get(id);
+    }
+    
+    public Iterator get_edges_iter() {
+        return this.edges.entrySet().iterator();
+    }
+    
     public void print_as_matrix(){
         for(Node line : nodes.values()){
             for(Node column : nodes.values()){
