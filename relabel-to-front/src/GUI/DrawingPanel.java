@@ -45,9 +45,6 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
      */
     public DrawingPanel() {
         this.gr = new RelabelToFrontGraph();
-        Node n1 = this.gr.add_node(new Node(50, 60));
-        Node n2 = this.gr.add_node(new Node(100, 320));
-        this.gr.add_edge(new Edge(n2, n1, 5));
         this.state = Mode.EDIT;
         this.source = -1;
         this.sink = -1;
@@ -88,6 +85,7 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
     
     public void load_graph(Graph g) {
         this.gr = (RelabelToFrontGraph)g;
+        this.repaint();
     }
     
     public Graph get_graph() {
@@ -100,6 +98,14 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
     
     public int get_sink_id() {
         return this.sink;
+    }
+    
+    public void clear() {
+        this.gr = new RelabelToFrontGraph();
+        this.sink = -1;
+        this.source = -1;
+        this.state = Mode.EDIT;
+        this.repaint();
     }
     
     private void drawArrow(Graphics g1, int x1, int y1, int x2, int y2) {
