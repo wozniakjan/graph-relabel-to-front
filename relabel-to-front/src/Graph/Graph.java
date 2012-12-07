@@ -56,6 +56,14 @@ public class Graph {
         }
         return null;
     }
+    public Edge get_edge(int id_u, int id_v){
+        for(Edge e : edges.values()){
+            if(e.from().get_id() == id_u && e.to().get_id() == id_v){
+                return e;
+            }
+        }
+        return null;
+    }
     public void print_as_matrix(){
         for(Node line : nodes.values()){
             for(Node column : nodes.values()){
