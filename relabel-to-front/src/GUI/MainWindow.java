@@ -4,6 +4,9 @@
  */
 package GUI;
 
+import Graph.*;
+import javax.swing.JFileChooser;
+
 /**
  *
  * @author Marek
@@ -44,7 +47,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(680, 445));
-        getContentPane().setLayout(new java.awt.GridLayout());
+        getContentPane().setLayout(new java.awt.GridLayout(1, 0));
 
         mainPanel.setPreferredSize(new java.awt.Dimension(680, 424));
         mainPanel.setLayout(new javax.swing.BoxLayout(mainPanel, javax.swing.BoxLayout.LINE_AXIS));
@@ -90,7 +93,7 @@ public class MainWindow extends javax.swing.JFrame {
         controlPanelLayout.setHorizontalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(controlPanelLayout.createSequentialGroup()
-                .addComponent(algorithmPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 169, Short.MAX_VALUE)
+                .addComponent(algorithmPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
                 .addContainerGap())
         );
         controlPanelLayout.setVerticalGroup(
@@ -174,14 +177,25 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void newMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newMenuButtonActionPerformed
         // TODO add your handling code here:
+        this.graphPanel.clear();
     }//GEN-LAST:event_newMenuButtonActionPerformed
 
     private void openMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuButtonActionPerformed
-        // TODO add your handling code here:
+        JFileChooser fc = new JFileChooser();
+        if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            Graph g = new RelabelToFrontGraph();
+            if (g.load_from_XML(fc.getSelectedFile())) {
+                System.out.println("otvorene");
+                this.graphPanel.load_graph(g);
+            }
+        }
     }//GEN-LAST:event_openMenuButtonActionPerformed
 
     private void saveMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuButtonActionPerformed
-        // TODO add your handling code here:
+        JFileChooser fc = new JFileChooser();
+        if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            this.graphPanel.get_graph().save_to_XML(fc.getSelectedFile());
+        }
     }//GEN-LAST:event_saveMenuButtonActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed

@@ -1,15 +1,27 @@
 package Graph;
 
+import java.awt.Point;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
+
 public class Node {
     //protected List<Edge> edges;
+    
+    private final int NODE_RADIUS = 16;
     
     protected int _id;
     protected Node current_neighbour;
     protected int height;
-    protected int excess;
     
-    public Node(){
-        //edges = new ArrayList();
+    
+    // for GUI representation
+    protected Shape s;
+    protected int x, y;
+    
+    public Node(int i, int j) {
+        this.x = i;
+        this.y = j;
+        this.s = new Ellipse2D.Double(i - (NODE_RADIUS/2), j - (NODE_RADIUS/2), NODE_RADIUS, NODE_RADIUS);        
     }
 
     public void set_id(int id){
@@ -34,5 +46,17 @@ public class Node {
     
     public int get_height(){
         return height;
+    }
+    
+    public Point get_position() {
+        return new Point(this.x, this.y);
+    }
+    
+    public void set_shape(Shape sh) {
+        this.s = sh;
+    }
+    
+    public Shape get_shape() {
+        return this.s;
     }
 }
