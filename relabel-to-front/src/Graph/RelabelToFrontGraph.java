@@ -2,7 +2,7 @@ package Graph;
 
 import java.util.*;
 
-public class RelabelToFrontGraph extends Graph {
+public class RelabelToFrontGraph extends Graph implements Runnable {
     Node _source;
     int _source_index;
     Node _sink;
@@ -17,7 +17,35 @@ public class RelabelToFrontGraph extends Graph {
     int[] list;
     
     Node[] index;
+    
+    GraphListener listener;
+    
+    public void set_listener(GraphListener l){
+        listener = l;
+    }
+    
+    private void change_flow(int u, int v, int value, boolean yield, String message){
+        F[u][v] = value;
+        listener.change_flow(u, v, value);
+        if(yield){
+            listener.yield();
+        }
+        if(message!=""){
+            listener.print_message(message);
+        }
+    }
 
+    private void change_height(int u, int value, boolean yield, String message){
+        height[u] = value;
+        listener.change_height(u, value);
+        if(yield){
+            listener.yield();
+        }
+        if(message!=""){
+            listener.print_message(message);
+        }
+    }
+    
     private void initialize(Node source, Node sink){
         _source = source;
         _sink = sink;
@@ -37,7 +65,7 @@ public class RelabelToFrontGraph extends Graph {
             u.set_height(0);
             int i_v = 0;
             for(Node v : nodes.values()){
-                F[i_u][i_v] = 0;
+                change_flow(i_u, i_v, 0, false, "");
                 Edge e = get_edge(u, v);
                 if(e == null){
                     C[i_u][i_v] = 0;
@@ -47,7 +75,7 @@ public class RelabelToFrontGraph extends Graph {
                 }
                 i_v++;
             }
-            height[i_u]=0;
+            change_height(i_u, 0, false, "");
             excess[i_u]=0;
             seen[i_u]=0;
             index[i_u] = u;
@@ -72,7 +100,7 @@ public class RelabelToFrontGraph extends Graph {
         _source.set_height(nodes.size());
     }
     
-    private int total_flow(){
+    public int total_flow(){
         int sum = 0;
         for(int i=0; i<n; i++){
             sum+=F[_source_index][i];
@@ -89,9 +117,17 @@ public class RelabelToFrontGraph extends Graph {
         list[0] = aux;
     }
     
-    public int do_the_trick(Node source, Node sink){
-        initialize(source, sink);
-        height[_source_index] = n;
+    public void set_sink(Node sink){
+        _sink = sink;
+    }
+    
+    public void set_source(Node source){
+        _source = source;
+    }
+    
+    public void run(){
+        initialize(_source, _sink);
+        change_height(_source_index, n, true, "");
         excess[_source_index] = Integer.MAX_VALUE;
         
         for(int v = 0; v<n; v++){
@@ -112,14 +148,14 @@ public class RelabelToFrontGraph extends Graph {
             }
         }
         
-        return total_flow();
+        listener.print_total_flow(total_flow());
     }
     
     private void discharge(int u){
        while(excess[u] > 0){
            if(seen[u] < n){
                int v = seen[u];
-               if((C[u][v]-F[u][v])>0 && height[u]>height[v]){
+               if((C[u][v]-F[u][v])>0 && height[u]>height[v]){ //residual
                    push(u,v);
                }
                else {
@@ -135,8 +171,8 @@ public class RelabelToFrontGraph extends Graph {
     
     private void push(int u, int v){
         int send = Math.min(excess[u], C[u][v] - F[u][v]);
-        F[u][v] += send;
-        F[v][u] -= send;
+        change_flow(u, v, F[u][v] + send, true, "");
+        change_flow(v, u, F[v][u] - send, true, "");
         excess[u] -= send;
         excess[v] += send;
     }
@@ -144,9 +180,9 @@ public class RelabelToFrontGraph extends Graph {
     private void relabel(int u){
         int min_height = Integer.MAX_VALUE;
         for(int v = 0; v<n; v++){
-            if((C[u][v] - F[u][v])>0){
+            if((C[u][v] - F[u][v])>0){ //residual
                 min_height = Math.min(min_height, height[v]);
-                height[u] = min_height+1;
+                change_height(u, min_height+1, true, "");
             }
         }
     }

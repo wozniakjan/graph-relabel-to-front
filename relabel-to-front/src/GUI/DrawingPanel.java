@@ -57,7 +57,7 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
         JMenuItem menuItem = new JMenuItem("Add Node");
         menuItem.addActionListener(this);
         this.popMenu.add(menuItem);
-        menuItem = new JMenuItem("Edit Height");
+        menuItem = new JMenuItem("XXX");
         menuItem.addActionListener(this);
         this.popMenu.add(menuItem);
         menuItem = new JMenuItem("Delete");
@@ -270,17 +270,17 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
         JMenuItem action = (JMenuItem)e.getSource();
         switch (action.getText()) {
             case "Add Node":
-                int h = Integer.parseInt(JOptionPane.showInputDialog(this, "Height:", "Node Addition", JOptionPane.QUESTION_MESSAGE));
+                //int h = Integer.parseInt(JOptionPane.showInputDialog(this, "Height:", "Node Addition", JOptionPane.QUESTION_MESSAGE));
                 Node n = new Node(this.clickedPoint.x, this.clickedPoint.y);
-                n.set_height(h);
+                //n.set_height(h);
                 this.gr.add_node(n);
                 this.repaint();
                 break;
-            case "Edit Height":
+            /*case "Edit Height":
                 int n_h = Integer.parseInt(JOptionPane.showInputDialog(this, "Height:", (Object)this.gr.get_node(this.clickedId).get_height()));
                 this.gr.get_node(this.clickedId).set_height(n_h);
                 this.repaint();
-                break;
+                break;*/
             case "Start edge":
                 this.state = Mode.ADD_EDGE;
                 break;
