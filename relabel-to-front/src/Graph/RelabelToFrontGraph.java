@@ -33,15 +33,21 @@ public class RelabelToFrontGraph extends Graph implements Runnable {
         Edge e = get_edge(u_node, v_node);
         if(e!=null){
             e.set_flow(value);
+            listener.change_flow(u_node, v_node, value);
+            if(message!=""){
+                listener.print_message(message);
+            }
+            if(yield){
+                listener.yield();
+            }
         }
-        
-        listener.change_flow(u_node, v_node, value);
-        if(yield){
-            listener.yield();
+        else{
+            listener.print_message("Change flow on virtual edge");
+            if(yield){
+                listener.yield();
+            }
         }
-        if(message!=""){
-            listener.print_message(message);
-        }
+
     }
 
     private void change_height(int u, int value, boolean yield, String message){
@@ -49,11 +55,11 @@ public class RelabelToFrontGraph extends Graph implements Runnable {
         Node u_node = index[u];
         u_node.set_height(value);
         listener.change_height(u_node, value);
-        if(yield){
-            listener.yield();
-        }
         if(message!=""){
             listener.print_message(message);
+        }
+        if(yield){
+            listener.yield();
         }
     }
     
@@ -144,7 +150,7 @@ public class RelabelToFrontGraph extends Graph implements Runnable {
     
     public void run(){
         initialize(_source, _sink);
-        change_height(_source_index, n, true, "");
+        change_height(_source_index, n, true, "Initialize height of source");
         excess[_source_index] = Integer.MAX_VALUE;
         
         for(int v = 0; v<n; v++){
@@ -188,8 +194,8 @@ public class RelabelToFrontGraph extends Graph implements Runnable {
     
     private void push(int u, int v){
         int send = Math.min(excess[u], C[u][v] - F[u][v]);
-        change_flow(u, v, F[u][v] + send, true, "");
-        change_flow(v, u, F[v][u] - send, true, "");
+        change_flow(u, v, F[u][v] + send, true, "Push through "+index[u].get_id()+"->"+index[v].get_id());
+        change_flow(v, u, F[v][u] - send, true, "Push through "+index[v].get_id()+"->"+index[u].get_id());
         excess[u] -= send;
         excess[v] += send;
     }
@@ -199,7 +205,7 @@ public class RelabelToFrontGraph extends Graph implements Runnable {
         for(int v = 0; v<n; v++){
             if((C[u][v] - F[u][v])>0){ //residual
                 min_height = Math.min(min_height, height[v]);
-                change_height(u, min_height+1, true, "");
+                change_height(u, min_height+1, true, "Relabeling "+index[u].get_id());
             }
         }
     }

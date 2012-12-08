@@ -9,7 +9,7 @@ package Graph;
  * @author Jan
  */
 public interface GraphListener {
-    //Waits until user requests another step
+    //Stays in this method until user requests another step
     public void yield();
     
     //Changes value of flow from Node U to Node V
