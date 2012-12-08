@@ -19,11 +19,11 @@ public class Test implements GraphListener{
         }
     }
     
-    public void change_flow(int u, int v, int value){
-        System.out.println("flow " + u + "->" + v + "=" + value);
+    public void change_flow(Node u, Node v, int value){
+        System.out.println("flow " + u.get_id() + "->" + v.get_id() + "=" + value);
     }
-    public void change_height(int u, int value){
-        System.out.println("height " + u + "=" + value);
+    public void change_height(Node u, int value){
+        System.out.println("height " + u.get_id() + "=" + value);
     }
     public void print_message(String message){
         System.out.println(message);

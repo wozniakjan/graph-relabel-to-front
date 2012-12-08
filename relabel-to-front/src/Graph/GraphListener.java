@@ -13,10 +13,10 @@ public interface GraphListener {
     public void yield();
     
     //Changes value of flow from Node U to Node V
-    public void change_flow(int u, int v, int value);
+    public void change_flow(Node u, Node v, int value);
     
     //Changes height of Node U
-    public void change_height(int u, int value);
+    public void change_height(Node u, int value);
     
     //Prints lovely message for user
     public void print_message(String message);

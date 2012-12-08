@@ -26,7 +26,16 @@ public class RelabelToFrontGraph extends Graph implements Runnable {
     
     private void change_flow(int u, int v, int value, boolean yield, String message){
         F[u][v] = value;
-        listener.change_flow(u, v, value);
+        
+        Node u_node = index[u];
+        Node v_node = index[v];
+        
+        Edge e = get_edge(u_node, v_node);
+        if(e!=null){
+            e.set_flow(value);
+        }
+        
+        listener.change_flow(u_node, v_node, value);
         if(yield){
             listener.yield();
         }
@@ -37,7 +46,9 @@ public class RelabelToFrontGraph extends Graph implements Runnable {
 
     private void change_height(int u, int value, boolean yield, String message){
         height[u] = value;
-        listener.change_height(u, value);
+        Node u_node = index[u];
+        u_node.set_height(value);
+        listener.change_height(u_node, value);
         if(yield){
             listener.yield();
         }
@@ -65,8 +76,12 @@ public class RelabelToFrontGraph extends Graph implements Runnable {
             u.set_height(0);
             int i_v = 0;
             for(Node v : nodes.values()){
-                change_flow(i_u, i_v, 0, false, "");
                 Edge e = get_edge(u, v);
+                if(e!=null){
+                    e.set_flow(0);
+                }
+                F[i_u][i_v] = 0;
+                //change_flow(i_u, i_v, 0, false, "");
                 if(e == null){
                     C[i_u][i_v] = 0;
                 }
@@ -75,7 +90,9 @@ public class RelabelToFrontGraph extends Graph implements Runnable {
                 }
                 i_v++;
             }
-            change_height(i_u, 0, false, "");
+            u.set_height(0);
+            height[i_u] = 0;
+            //change_height(i_u, 0, false, "");
             excess[i_u]=0;
             seen[i_u]=0;
             index[i_u] = u;
