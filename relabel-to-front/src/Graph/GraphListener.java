@@ -13,7 +13,7 @@ public interface GraphListener {
     public void yield();
     
     //Changes value of flow from Node U to Node V
-    public void change_flow(Node u, Node v, int value);
+    public void change_flow(Edge e, int value);
     
     //Changes height of Node U
     public void change_height(Node u, int value);

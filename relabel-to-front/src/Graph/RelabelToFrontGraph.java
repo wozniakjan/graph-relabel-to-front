@@ -33,7 +33,7 @@ public class RelabelToFrontGraph extends Graph implements Runnable {
         Edge e = get_edge(u_node, v_node);
         if(e!=null){
             e.set_flow(value);
-            listener.change_flow(u_node, v_node, value);
+            listener.change_flow(e, value);
             if(message!=""){
                 listener.print_message(message);
             }

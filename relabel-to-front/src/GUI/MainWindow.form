@@ -186,17 +186,9 @@
                 <Property name="horizontalGap" type="int" value="2"/>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JButton" name="backButton">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="back"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="backButtonActionPerformed"/>
-                  </Events>
-                </Component>
                 <Component class="javax.swing.JButton" name="runButton">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="run"/>
+                    <Property name="text" type="java.lang.String" value="start"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="runButtonActionPerformed"/>
@@ -204,7 +196,8 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="forwardButton">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="next"/>
+                    <Property name="text" type="java.lang.String" value="step"/>
+                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="forwardButtonActionPerformed"/>
@@ -227,6 +220,7 @@
                   <Properties>
                     <Property name="editable" type="boolean" value="false"/>
                     <Property name="columns" type="int" value="20"/>
+                    <Property name="lineWrap" type="boolean" value="true"/>
                     <Property name="rows" type="int" value="5"/>
                     <Property name="autoscrolls" type="boolean" value="false"/>
                     <Property name="enabled" type="boolean" value="false"/>

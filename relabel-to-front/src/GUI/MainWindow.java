@@ -6,6 +6,7 @@ package GUI;
 
 import Graph.*;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -13,8 +14,6 @@ import javax.swing.JFileChooser;
  */
 public class MainWindow extends javax.swing.JFrame implements GraphListener {
 
-    
-    protected boolean btn_pressed;
     /**
      * Creates new form MainWindow
      */
@@ -35,7 +34,6 @@ public class MainWindow extends javax.swing.JFrame implements GraphListener {
         graphPanel = new GUI.DrawingPanel(this);
         controlPanel = new javax.swing.JPanel();
         algorithmPanel = new javax.swing.JPanel();
-        backButton = new javax.swing.JButton();
         runButton = new javax.swing.JButton();
         forwardButton = new javax.swing.JButton();
         statusAreaScroll = new javax.swing.JScrollPane();
@@ -79,15 +77,7 @@ public class MainWindow extends javax.swing.JFrame implements GraphListener {
         algorithmPanel.setMinimumSize(new java.awt.Dimension(170, 49));
         algorithmPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 2, 5));
 
-        backButton.setText("back");
-        backButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                backButtonActionPerformed(evt);
-            }
-        });
-        algorithmPanel.add(backButton);
-
-        runButton.setText("run");
+        runButton.setText("start");
         runButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 runButtonActionPerformed(evt);
@@ -95,7 +85,8 @@ public class MainWindow extends javax.swing.JFrame implements GraphListener {
         });
         algorithmPanel.add(runButton);
 
-        forwardButton.setText("next");
+        forwardButton.setText("step");
+        forwardButton.setEnabled(false);
         forwardButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 forwardButtonActionPerformed(evt);
@@ -108,6 +99,7 @@ public class MainWindow extends javax.swing.JFrame implements GraphListener {
 
         statusArea.setEditable(false);
         statusArea.setColumns(20);
+        statusArea.setLineWrap(true);
         statusArea.setRows(5);
         statusArea.setAutoscrolls(false);
         statusArea.setEnabled(false);
@@ -207,6 +199,8 @@ public class MainWindow extends javax.swing.JFrame implements GraphListener {
 
     private void helpMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpMenuButtonActionPerformed
         // TODO add your handling code here:
+        HelpFrame hf = new HelpFrame();
+        hf.setVisible(true);
     }//GEN-LAST:event_helpMenuButtonActionPerformed
 
     private void newMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newMenuButtonActionPerformed
@@ -232,19 +226,20 @@ public class MainWindow extends javax.swing.JFrame implements GraphListener {
         }
     }//GEN-LAST:event_saveMenuButtonActionPerformed
 
-    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_backButtonActionPerformed
-
     private void forwardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forwardButtonActionPerformed
-        btn_pressed = false;
-        this.graphPanel.gr.notify();
+        synchronized (this.graphPanel.gr_t) {
+            this.graphPanel.gr_t.notify();
+        }
     }//GEN-LAST:event_forwardButtonActionPerformed
 
     private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
-        // TODO add your handling code here:
-        this.graphPanel.gr.run();
-        
+        if (this.graphPanel.sink != -1 && this.graphPanel.source != -1) {
+            this.graphPanel.gr_t = new Thread(this.graphPanel.gr);
+            this.graphPanel.gr_t.start();
+            this.forwardButton.setEnabled(true);
+        } else {
+            JOptionPane.showMessageDialog(this, "You need to select source and sink nodes in order to run an algorithm!", "Missing source or sink node", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_runButtonActionPerformed
 
     /**
@@ -283,7 +278,6 @@ public class MainWindow extends javax.swing.JFrame implements GraphListener {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel algorithmPanel;
-    private javax.swing.JButton backButton;
     private javax.swing.JPanel controlPanel;
     private javax.swing.JMenuItem exitMenuButton;
     private javax.swing.JMenu fileMenu;
@@ -302,35 +296,36 @@ public class MainWindow extends javax.swing.JFrame implements GraphListener {
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void yield() {
-        btn_pressed = true;        
+    public void yield() {     
         try {
-            synchronized(this.graphPanel.gr) {
-                this.graphPanel.gr.wait();
+            synchronized(this.graphPanel.gr_t) {
+                this.graphPanel.gr_t.wait();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("vysel");
     }
 
     @Override
-    public void change_flow(Node u, Node v, int value) {
-        
+    public void change_flow(Edge e, int value) {
+        this.graphPanel.lightdown();
+        this.graphPanel.highlight(e);
     }
 
     @Override
     public void change_height(Node u, int value) {
-        
+        this.graphPanel.lightdown();
+        this.graphPanel.highlight(u);
     }
 
     @Override
     public void print_message(String message) {
-        
+        this.statusArea.setText(message);
     }
 
     @Override
     public void print_total_flow(int flow) {
-        
+        this.statusArea.setText("Finished with total flow: " + Integer.toString(flow));
+        this.forwardButton.setEnabled(false);
     }
 }

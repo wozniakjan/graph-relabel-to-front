@@ -32,6 +32,7 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
     
     
     protected RelabelToFrontGraph gr;
+    protected Thread gr_t;
     protected Mode state;
     protected JPopupMenu popMenu;
     protected JPopupMenu edgeMenu;
@@ -40,6 +41,9 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
     protected int sink;
     protected int source;
     protected GraphListener parent;
+    protected Edge li_edge;
+    protected Node li_node;
+    
     
     /**
      * Creates new form DrawingPanel
@@ -110,6 +114,21 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
         this.repaint();
     }
     
+    public void highlight(Node n) {
+        this.li_node = n;
+        this.repaint();
+    }
+    
+    public void highlight(Edge e) {
+        this.li_edge = e; 
+        this.repaint();
+    }
+    
+    public void lightdown() {
+        this.li_edge = null;
+        this.li_node = null;
+    }
+    
     private void drawArrow(Graphics g1, int x1, int y1, int x2, int y2) {
         Graphics2D g = (Graphics2D) g1.create();
         double dx = x2 - x1, dy = y2 - y1;
@@ -138,8 +157,20 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
             Edge e = (Edge)entry.getValue();
             Point p1 = e.from().get_position();
             Point p2 = e.to().get_position();
+            if (e.equals(this.li_edge)) {
+                g2.setColor(Color.yellow);
+                g2.draw(e.get_shape());
+                g2.setColor(Color.black);
+            }
             this.drawArrow(g, p1.x, p1.y, p2.x, p2.y);
-            g2.drawChars(new Integer(e.get_capacity()).toString().toCharArray(), 0, new Integer(e.get_capacity()).toString().length(), p1.x + (p2.x - p1.x)/2 + 5, p1.y + (p2.y - p1.y)/2);
+            String e_msg = Integer.toString(e.get_flow()) + "/" + Integer.toString(e.get_capacity());
+            if (e.equals(this.li_edge)) {
+                g2.setColor(Color.red);
+            }
+            g2.drawChars(e_msg.toCharArray(), 0, e_msg.length(), p1.x + (p2.x - p1.x)/2 + 5, p1.y + (p2.y - p1.y)/2);
+            if (e.equals(this.li_edge)) {
+                g2.setColor(Color.black);
+            }
         }
 
         it = this.gr.get_nodes_iter();
@@ -151,9 +182,19 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
             } else if (n.get_id() == this.source){
                 g2.setColor(Color.green);
             }
+            if (n.equals(this.li_node)) {
+                g2.setColor(Color.yellow);
+            }
             g2.fill(n.get_shape());
-            String label = "id:" + Integer.toString(n.get_id()) + ";height:" + Integer.toString(n.get_height());
-            g2.drawChars(label.toCharArray(), 0, label.length(), n.get_position().x + Node.NODE_RADIUS, n.get_position().y);
+            String label = "h:" + Integer.toString(n.get_height());
+            g2.setColor(Color.white);
+            g2.drawChars(Integer.toString(n.get_id()).toCharArray(), 0, Integer.toString(n.get_id()).length(),n.get_position().x - Node.NODE_RADIUS/5, n.get_position().y + Node.NODE_RADIUS/4);
+            if (n.equals(this.li_node)) {
+                g2.setColor(Color.red);
+            } else {
+                g2.setColor(Color.black);
+            }
+            g2.drawChars(label.toCharArray(), 0, label.length(), n.get_position().x + Node.NODE_RADIUS/2, n.get_position().y);
             g2.setColor(Color.black);
             if (n.get_id() == this.clickedId && this.state == Mode.ADD_EDGE) {
                 g2.drawLine(n.get_position().x, n.get_position().y, this.clickedPoint.x, this.clickedPoint.y);
@@ -205,9 +246,15 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
                 entry = (Map.Entry)it.next();
                 Node n = (Node)entry.getValue();
                 if (n.get_shape().contains(evt.getPoint())) {
-                    int c = Integer.parseInt(JOptionPane.showInputDialog(this, "Capacity:", "Edge Addition", JOptionPane.QUESTION_MESSAGE));
-                    Edge e = new Edge(this.gr.get_node(this.clickedId), n, c);
-                    this.gr.add_edge(e);
+                    int c;
+                    try {
+                        c = Integer.parseInt(JOptionPane.showInputDialog(this, "Capacity:", "Edge Addition", JOptionPane.QUESTION_MESSAGE));
+                        this.gr.get_edge(this.clickedId).set_capacity(c);
+                        Edge e = new Edge(this.gr.get_node(this.clickedId), n, c);
+                        this.gr.add_edge(e);
+                    } catch (Exception exc) {
+                        JOptionPane.showMessageDialog(this, exc.getMessage(), "Entered capacity is not a number!", JOptionPane.ERROR_MESSAGE);
+                    }                    
                     break;
                 }
             }
@@ -257,17 +304,6 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
                 this.popMenu.getComponent(6).setEnabled(false); // set as sink
             }
             this.popMenu.show(this, evt.getX(), evt.getY());
-        } else if (evt.getButton() == java.awt.event.MouseEvent.BUTTON1) {
-            it = this.gr.get_nodes_iter();         
-            while (it.hasNext()) {
-                entry = (Map.Entry)it.next();
-                Node n = (Node)entry.getValue();
-                if (n.get_shape().contains(clickedPoint)) {
-                    this.clickedId = n.get_id();
-                    break;
-                }
-            }
-            this.firePropertyChange("selection", state, state);
         }
     }//GEN-LAST:event_formMouseClicked
 
@@ -316,8 +352,13 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
                 this.repaint();
                 break;
             case "Edit capacity":
-                int c = Integer.parseInt(JOptionPane.showInputDialog(this, "Capacity:", (Object)this.gr.get_edge(this.clickedId).get_capacity()));
-                this.gr.get_edge(this.clickedId).set_capacity(c);
+                int c;
+                try {
+                    c = Integer.parseInt(JOptionPane.showInputDialog(this, "Capacity:", (Object)this.gr.get_edge(this.clickedId).get_capacity()));
+                    this.gr.get_edge(this.clickedId).set_capacity(c);
+                } catch (Exception exc) {
+                    JOptionPane.showMessageDialog(this, exc.getMessage(), "Entered capacity is not a number!", JOptionPane.ERROR_MESSAGE);
+                }
                 this.repaint();
                 break;
         }

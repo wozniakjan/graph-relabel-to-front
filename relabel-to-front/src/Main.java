@@ -1,10 +1,8 @@
-import Graph.*;
-import java.io.*;
-
-
+import GUI.MainWindow;
 
 public class Main  {   
     public static void main(String[] args) {
-        Test t = new Test();
+        MainWindow mw = new MainWindow();
+        mw.setVisible(true);
     }
 }

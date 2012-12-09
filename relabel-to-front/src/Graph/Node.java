@@ -7,7 +7,7 @@ import java.awt.geom.Ellipse2D;
 public class Node {
     //protected List<Edge> edges;
     
-    public static int NODE_RADIUS = 16;
+    public static int NODE_RADIUS = 20;
     
     protected int _id;
     protected Node current_neighbour;
