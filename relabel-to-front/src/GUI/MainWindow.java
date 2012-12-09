@@ -11,8 +11,10 @@ import javax.swing.JFileChooser;
  *
  * @author Marek
  */
-public class MainWindow extends javax.swing.JFrame {
+public class MainWindow extends javax.swing.JFrame implements GraphListener {
 
+    
+    protected boolean btn_pressed;
     /**
      * Creates new form MainWindow
      */
@@ -30,12 +32,14 @@ public class MainWindow extends javax.swing.JFrame {
     private void initComponents() {
 
         mainPanel = new javax.swing.JPanel();
-        graphPanel = new GUI.DrawingPanel();
+        graphPanel = new GUI.DrawingPanel(this);
         controlPanel = new javax.swing.JPanel();
         algorithmPanel = new javax.swing.JPanel();
         backButton = new javax.swing.JButton();
         runButton = new javax.swing.JButton();
         forwardButton = new javax.swing.JButton();
+        statusAreaScroll = new javax.swing.JScrollPane();
+        statusArea = new javax.swing.JTextArea();
         mainMenu = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         newMenuButton = new javax.swing.JMenuItem();
@@ -67,6 +71,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         mainPanel.add(graphPanel);
 
+        controlPanel.setEnabled(false);
         controlPanel.setMaximumSize(new java.awt.Dimension(170, 32767));
         controlPanel.setMinimumSize(new java.awt.Dimension(170, 0));
         controlPanel.setPreferredSize(new java.awt.Dimension(170, 424));
@@ -83,17 +88,44 @@ public class MainWindow extends javax.swing.JFrame {
         algorithmPanel.add(backButton);
 
         runButton.setText("run");
+        runButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                runButtonActionPerformed(evt);
+            }
+        });
         algorithmPanel.add(runButton);
 
         forwardButton.setText("next");
+        forwardButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                forwardButtonActionPerformed(evt);
+            }
+        });
         algorithmPanel.add(forwardButton);
+
+        statusAreaScroll.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        statusAreaScroll.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        statusArea.setEditable(false);
+        statusArea.setColumns(20);
+        statusArea.setRows(5);
+        statusArea.setAutoscrolls(false);
+        statusArea.setEnabled(false);
+        statusArea.setFocusable(false);
+        statusArea.setMaximumSize(new java.awt.Dimension(160, 2147483647));
+        statusArea.setMinimumSize(new java.awt.Dimension(160, 16));
+        statusArea.setPreferredSize(new java.awt.Dimension(160, 64));
+        statusAreaScroll.setViewportView(statusArea);
+        statusArea.getAccessibleContext().setAccessibleParent(controlPanel);
 
         javax.swing.GroupLayout controlPanelLayout = new javax.swing.GroupLayout(controlPanel);
         controlPanel.setLayout(controlPanelLayout);
         controlPanelLayout.setHorizontalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(controlPanelLayout.createSequentialGroup()
-                .addComponent(algorithmPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(algorithmPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(statusAreaScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         controlPanelLayout.setVerticalGroup(
@@ -101,7 +133,9 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(controlPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(algorithmPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(380, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(statusAreaScroll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(296, Short.MAX_VALUE))
         );
 
         mainPanel.add(controlPanel);
@@ -202,6 +236,17 @@ public class MainWindow extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_backButtonActionPerformed
 
+    private void forwardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forwardButtonActionPerformed
+        btn_pressed = false;
+        this.graphPanel.gr.notify();
+    }//GEN-LAST:event_forwardButtonActionPerformed
+
+    private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
+        // TODO add your handling code here:
+        this.graphPanel.gr.run();
+        
+    }//GEN-LAST:event_runButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -252,5 +297,40 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem openMenuButton;
     private javax.swing.JButton runButton;
     private javax.swing.JMenuItem saveMenuButton;
+    private javax.swing.JTextArea statusArea;
+    private javax.swing.JScrollPane statusAreaScroll;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void yield() {
+        btn_pressed = true;        
+        try {
+            synchronized(this.graphPanel.gr) {
+                this.graphPanel.gr.wait();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("vysel");
+    }
+
+    @Override
+    public void change_flow(Node u, Node v, int value) {
+        
+    }
+
+    @Override
+    public void change_height(Node u, int value) {
+        
+    }
+
+    @Override
+    public void print_message(String message) {
+        
+    }
+
+    @Override
+    public void print_total_flow(int flow) {
+        
+    }
 }

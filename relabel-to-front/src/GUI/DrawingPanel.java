@@ -39,25 +39,26 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
     protected int clickedId;
     protected int sink;
     protected int source;
+    protected GraphListener parent;
     
     /**
      * Creates new form DrawingPanel
      */
-    public DrawingPanel() {
+    public DrawingPanel(GraphListener gl) {
         this.gr = new RelabelToFrontGraph();
+        this.parent = gl;
+        this.gr.set_listener(gl);
         this.state = Mode.EDIT;
         this.source = -1;
         this.sink = -1;
         initComponents();
         this.initPopupMenu();
+        
     }
     
     private void initPopupMenu() {
         this.popMenu = new JPopupMenu();
         JMenuItem menuItem = new JMenuItem("Add Node");
-        menuItem.addActionListener(this);
-        this.popMenu.add(menuItem);
-        menuItem = new JMenuItem("XXX");
         menuItem.addActionListener(this);
         this.popMenu.add(menuItem);
         menuItem = new JMenuItem("Delete");
@@ -85,6 +86,7 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
     
     public void load_graph(Graph g) {
         this.gr = (RelabelToFrontGraph)g;
+        this.gr.set_listener(this.parent);
         this.repaint();
     }
     
@@ -150,6 +152,8 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
                 g2.setColor(Color.green);
             }
             g2.fill(n.get_shape());
+            String label = "id:" + Integer.toString(n.get_id()) + ";height:" + Integer.toString(n.get_height());
+            g2.drawChars(label.toCharArray(), 0, label.length(), n.get_position().x + Node.NODE_RADIUS, n.get_position().y);
             g2.setColor(Color.black);
             if (n.get_id() == this.clickedId && this.state == Mode.ADD_EDGE) {
                 g2.drawLine(n.get_position().x, n.get_position().y, this.clickedPoint.x, this.clickedPoint.y);
@@ -193,9 +197,10 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
 
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
         // TODO add your handling code here:
+        Iterator it;
+        Map.Entry entry;
         if (this.state == Mode.ADD_EDGE) {
-            Iterator it = this.gr.get_nodes_iter();
-            Map.Entry entry;            
+            it = this.gr.get_nodes_iter();         
             while (it.hasNext()) {
                 entry = (Map.Entry)it.next();
                 Node n = (Node)entry.getValue();
@@ -210,8 +215,7 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
             this.repaint();
         } else if (evt.getButton() == java.awt.event.MouseEvent.BUTTON3) {
             this.clickedPoint = evt.getPoint();
-            Iterator it = this.gr.get_edges_iter();
-            Map.Entry entry;
+            it = this.gr.get_edges_iter();
             boolean con = false;
             
             while (it.hasNext()) {
@@ -241,20 +245,29 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
             }
             if (con) {
                 this.popMenu.getComponent(0).setEnabled(false); // add node
-                this.popMenu.getComponent(1).setEnabled(true); // edit
-                this.popMenu.getComponent(2).setEnabled(true); // delete
-                this.popMenu.getComponent(4).setEnabled(true); // start edge
-                this.popMenu.getComponent(6).setEnabled(true); // set as source
-                this.popMenu.getComponent(7).setEnabled(true); // set as sink
+                this.popMenu.getComponent(1).setEnabled(true); // delete
+                this.popMenu.getComponent(3).setEnabled(true); // start edge
+                this.popMenu.getComponent(5).setEnabled(true); // set as source
+                this.popMenu.getComponent(6).setEnabled(true); // set as sink
             } else {
                 this.popMenu.getComponent(0).setEnabled(true); // add node
-                this.popMenu.getComponent(1).setEnabled(false); // edit
-                this.popMenu.getComponent(2).setEnabled(false); // delete
-                this.popMenu.getComponent(4).setEnabled(false); // start edge
-                this.popMenu.getComponent(6).setEnabled(false); // set as source
-                this.popMenu.getComponent(7).setEnabled(false); // set as sink
+                this.popMenu.getComponent(1).setEnabled(false); // delete
+                this.popMenu.getComponent(3).setEnabled(false); // start edge
+                this.popMenu.getComponent(5).setEnabled(false); // set as source
+                this.popMenu.getComponent(6).setEnabled(false); // set as sink
             }
             this.popMenu.show(this, evt.getX(), evt.getY());
+        } else if (evt.getButton() == java.awt.event.MouseEvent.BUTTON1) {
+            it = this.gr.get_nodes_iter();         
+            while (it.hasNext()) {
+                entry = (Map.Entry)it.next();
+                Node n = (Node)entry.getValue();
+                if (n.get_shape().contains(clickedPoint)) {
+                    this.clickedId = n.get_id();
+                    break;
+                }
+            }
+            this.firePropertyChange("selection", state, state);
         }
     }//GEN-LAST:event_formMouseClicked
 
@@ -290,10 +303,12 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
                 break;
             case "Set as source":
                 this.source = this.clickedId;
+                this.gr.set_source(this.gr.get_node(source));
                 this.repaint();
                 break;
             case "Set as sink":
                 this.sink = this.clickedId;
+                this.gr.set_sink(this.gr.get_node(sink));
                 this.repaint();
                 break;
             case "Remove":
