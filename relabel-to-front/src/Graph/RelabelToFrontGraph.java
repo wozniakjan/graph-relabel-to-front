@@ -3,9 +3,7 @@ package Graph;
 import java.util.*;
 
 public class RelabelToFrontGraph extends Graph implements Runnable {
-    Node _source;
     int _source_index;
-    Node _sink;
     int _sink_index;
     
     int n;
@@ -148,30 +146,43 @@ public class RelabelToFrontGraph extends Graph implements Runnable {
         _source = source;
     }
     
+    public Node get_sink(){
+        return _sink;
+    }
+    
+    public Node get_source(){
+        return _source;
+    }
+    
     public void run(){
-        initialize(_source, _sink);
-        change_height(_source_index, n, true, "Initialize height of source");
-        excess[_source_index] = Integer.MAX_VALUE;
-        
-        for(int v = 0; v<n; v++){
-            push(_source_index, v);
-        }
- 
-        int p = 0, u, old_height;
-        while(p < list.length){
-            u = list[p];
-            old_height = height[u];
-            discharge(u);
-            if(height[u]>old_height){
-                shift_list(p);
-                p=0;
+        if(_source != null && _sink != null){
+            initialize(_source, _sink);
+            change_height(_source_index, n, true, "Initialize height of source");
+            excess[_source_index] = Integer.MAX_VALUE;
+
+            for(int v = 0; v<n; v++){
+                push(_source_index, v);
             }
-            else {
-                p+=1;
+
+            int p = 0, u, old_height;
+            while(p < list.length){
+                u = list[p];
+                old_height = height[u];
+                discharge(u);
+                if(height[u]>old_height){
+                    shift_list(p);
+                    p=0;
+                }
+                else {
+                    p+=1;
+                }
             }
+
+            listener.print_total_flow(total_flow());
         }
-        
-        listener.print_total_flow(total_flow());
+        else{
+            listener.print_message("Set both, source and sink");
+        }
     }
     
     private void discharge(int u){

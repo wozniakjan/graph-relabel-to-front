@@ -20,6 +20,9 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 public class Graph {
+    Node _source;
+    Node _sink;
+    
     protected Map<Integer,Node> nodes;
     protected int node_id;
     
@@ -47,11 +50,18 @@ public class Graph {
     
     public void remove_node(int id){
         //nodes.get(id).delete();
+        List<Integer> remove_edges = new ArrayList();
         for(Edge e : edges.values()){
             if(e.from().get_id()==id || e.to().get_id()==id){
-                edges.remove(e.get_id());
+                remove_edges.add(e.get_id());
             }
         }
+        
+        for(int i : remove_edges){
+            remove_edge(i);
+        }
+        if(id == _source.get_id()) _source = null;
+        if(id == _sink.get_id()) _sink = null;
         nodes.remove(id);
     }
     
