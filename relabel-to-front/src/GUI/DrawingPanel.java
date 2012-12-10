@@ -249,7 +249,7 @@ public class DrawingPanel extends javax.swing.JPanel implements ActionListener {
                     int c;
                     try {
                         c = Integer.parseInt(JOptionPane.showInputDialog(this, "Capacity:", "Edge Addition", JOptionPane.QUESTION_MESSAGE));
-                        this.gr.get_edge(this.clickedId).set_capacity(c);
+                        //this.gr.get_edge(this.clickedId).set_capacity(c);
                         Edge e = new Edge(this.gr.get_node(this.clickedId), n, c);
                         this.gr.add_edge(e);
                     } catch (Exception exc) {
