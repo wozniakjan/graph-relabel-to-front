@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.9.26)  11 DEC 2012 08:39
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.9.26)  11 DEC 2012 10:37
 entering extended mode
  %&-line parsing enabled.
 **dokumentace
@@ -436,25 +436,54 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 )
 (/usr/share/texmf-texlive/tex/latex/multirow/multirow.sty
 \bigstrutjot=\dimen113
-) (./dokumentace.aux)
+) (./algorithm.sty
+\c@algorithm=\count100
+\Blockindent=\skip43
+\algorithmindent=\skip44
+)
+(./algorithmicx.sty
+Package: algorithmicx 2005/04/27 v1.2 Algorithmicx
+ (/usr/share/texmf-texlive/tex/latex/base/ifthen.sty
+Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+)
+Document Style algorithmicx 1.2 - a greatly improved `algorithmic' style
+\c@ALG@line=\count101
+\c@ALG@rem=\count102
+\c@ALG@nested=\count103
+\ALG@tlm=\skip45
+\ALG@thistlm=\skip46
+\c@ALG@Lnr=\count104
+\c@ALG@blocknr=\count105
+\c@ALG@storecount=\count106
+\c@ALG@tmpcounter=\count107
+\ALG@tmplength=\skip47
+) (./algpseudocode.sty
+Package: algpseudocode 
+
+Document Style - pseudocode environments for use with the `algorithmicx' style
+) (./dokumentace.aux
+
+LaTeX Warning: Label `pic1' multiply defined.
+
+)
 \openout1 = `dokumentace.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
 
 *geometry auto-detecting driver*
 *geometry detected driver: pdftex*
@@ -499,68 +528,62 @@ driver: pdftex
 -----------------------
 (/usr/share/texmf-texlive/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count100
+\scratchcounter=\count108
 \scratchdimen=\dimen114
 \scratchbox=\box28
-\nofMPsegments=\count101
-\nofMParguments=\count102
+\nofMPsegments=\count109
+\nofMParguments=\count110
 \everyMPshowfont=\toks21
-\MPscratchCnt=\count103
+\MPscratchCnt=\count111
 \MPscratchDim=\dimen115
-\MPnumerator=\count104
+\MPnumerator=\count112
 \everyMPtoPDFconversion=\toks22
 )
-Package hyperref Info: Link coloring ON on input line 15.
+Package hyperref Info: Link coloring ON on input line 18.
  (/usr/share/texmf-texlive/tex/latex/hyperref/nameref.sty
 Package: nameref 2007/05/29 v2.31 Cross-referencing by name of section
 
 (/usr/share/texmf-texlive/tex/latex/oberdiek/refcount.sty
 Package: refcount 2008/08/11 v3.1 Data extraction from references (HO)
 )
-\c@section@level=\count105
+\c@section@level=\count113
 )
-LaTeX Info: Redefining \ref on input line 15.
-LaTeX Info: Redefining \pageref on input line 15.
+LaTeX Info: Redefining \ref on input line 18.
+LaTeX Info: Redefining \pageref on input line 18.
  (./dokumentace.out) (./dokumentace.out)
 \@outlinefile=\write3
 \openout3 = `dokumentace.out'.
 
 \AtBeginShipoutBox=\box29
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <10.95> on input line 19.
+(Font)              <10.95> on input line 22.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 19.
+(Font)              <8> on input line 22.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 19.
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 80.
- (/usr/share/texmf-texlive/tex/latex/base/omscmr.fd
-File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
-)
-LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 80.
+(Font)              <6> on input line 22.
 
-[1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] [3]
-(./dokumentace.aux) ) 
+! LaTeX Error: \caption outside float.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.39 \caption
+             {Relabel-to-front(G,s,t)}
+? x
+ 
 Here is how much of TeX's memory you used:
- 6409 strings out of 495027
- 86139 string characters out of 1181419
- 160003 words of memory out of 3000000
- 9498 multiletter control sequences out of 15000+50000
+ 6887 strings out of 495027
+ 92734 string characters out of 1181419
+ 159800 words of memory out of 3000000
+ 9980 multiletter control sequences out of 15000+50000
  8412 words of font info for 30 fonts, out of 3000000 for 9000
  38 hyphenation exceptions out of 8191
- 38i,7n,36p,273b,333s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/c
-mbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx12.pfb><
-/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/
-texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texliv
-e/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/typ
-e1/public/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/a
-msfonts/cm/cmtt10.pfb>
-Output written on dokumentace.pdf (3 pages, 104114 bytes).
+ 38i,7n,36p,273b,276s stack positions out of 5000i,500n,10000p,200000b,50000s
+No pages of output.
 PDF statistics:
- 82 PDF objects out of 1000 (max. 8388607)
- 16 named destinations out of 1000 (max. 500000)
+ 23 PDF objects out of 1000 (max. 8388607)
+ 5 named destinations out of 1000 (max. 500000)
  41 words of extra memory for PDF output out of 10000 (max. 10000000)
 

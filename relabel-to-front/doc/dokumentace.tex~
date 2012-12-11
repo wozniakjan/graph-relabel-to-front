@@ -11,6 +11,9 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{multirow}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
 
 \begin{document}
 
@@ -23,10 +26,29 @@
 \end{center}
 
 \section{Introduction}
+This projects purpose was to create simple application for education and visualisation
+of Relabel-to-front algorithm. It is implemented purely in Java using Netbeans
+IDE.
 
 \section{Theoretical Analysis}
+The Relabel-to-front is quite efficient algorithm that computes a maximal flow in
+oriented graph. It is a special variant of push-relabel, where neighbours of a node
+are organized into a linked list \cite{rtf}. 
+\begin{algorithm}
+
+\begin{algorithmic}
+\If {$i\geq maxval$}
+    \State $i\gets 0$
+\Else
+    \If {$i+k\leq maxval$}
+        \State $i\gets i+k$
+    \EndIf
+\EndIf
+\end{algorithmic}
+\end{algorithm}
 
 \section{Implementation}
+
 
 
 \section{User Interface}
@@ -53,19 +75,19 @@ after right clicking on desired start node and then selection of the destination
 node (this is done again by clicking with any mouse button on desired node). 
 Loops are not allowed.
 
-%\begin{figure}[H]
-%  \centering
-%  \includegraphics[width=15cm]{pipeline.pdf}
-%  \caption{Schéma JPEG encode pipeline.}
-%  \label{pipeline}
-%\end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[width=12cm]{1.png}
+\caption{Simple graph created in our application. Node 1 is selected as source, node 4 as sink.}
+\label{pic1}
+\end{figure}
 
 \subsubsection*{Saving and loading graphs}
 Application allows to store and load graphs in GraphML format. This is a widely-used 
 xml format for graph representation. More info about this format can be found here: 
 \url{http://graphml.graphdrawing.org/}. The application can load GraphML files created
 by an application itself, other files must contain definition of additional attributes
-such as x_position, y_position and height for nodes, and capacity for edges. For more
+such as x\_position, y\_position and height for nodes, and capacity for edges. For more
 details, look at the saved file itself, the structure is, thanks to xml format, 
 easily readable. 
 
@@ -88,12 +110,12 @@ which are not visible to the user. Information about these changes (and also
 about all visible changes) can be found in text area below the control buttons.
 Final flow is displayed here too.
 
-%\begin{figure}[H]
-%  \centering
-%  \includegraphics[width=15cm]{pipeline.pdf}
-%  \caption{Schéma JPEG encode pipeline.}
-%  \label{pipeline}
-%\end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[width=12cm]{2.png}
+\caption{Running an algorithm. Node 2 is being relabeled, so it is painted in yellow.}
+\label{pic1}
+\end{figure}
 
 \section{Conclusion}
 
@@ -110,8 +132,8 @@ Final flow is displayed here too.
 %
 \begin{thebibliography}{MM}%
 % Vzor: \bi{label}{Název}{Poznámky.}{http://www.adresa.cz/}%
-\bi{t81}{Recommendation T.81}{\citdatum[2012-12-10]}
-    {http://www.w3.org/Graphics/JPEG/itu-t81.pdf}
+\bi{rtf}{Relabel to front -- Lecture}{\citdatum[2012-12-10]}
+    {http://wwwmayr.informatik.tu-muenchen.de/lehre/2011WS/ea/split/sub-Relabel-to-front-single.pdf}
 \bibitem{mul}{D. Bařina. \textit{Diskrétní kosínová transformace -- prezentace ke cvičení}. \citdatum[2008-12-08].\\
     $<$\url{http://www.fit.vutbr.cz/study/course-l.php.cs?id=8766}$>$}
 \bi{wiki}{Wikipedia, the free encyclopedia}{\citdatum[2012-12-10]}

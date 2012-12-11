@@ -40,9 +40,12 @@ public class RelabelToFrontGraph extends Graph implements Runnable {
             }
         }
         else{
-            listener.print_message("Change flow on virtual edge " + u_node.get_id() + "->" + v_node.get_id());
-            if(yield){
-                listener.yield();
+            Edge opposite = get_edge(v_node, u_node);
+            if(opposite != null){
+                listener.print_message("Change flow on virtual edge " + u_node.get_id() + "->" + v_node.get_id());
+                if(yield){
+                    listener.yield();
+                }
             }
         }
 
