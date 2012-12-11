@@ -1,0 +1,120 @@
+% Dokumentace k projektu do predmetu GZN
+% Autori: David Hromadka
+%         Jan Wozniak
+
+\documentclass[a4paper,11pt]{article}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[left=1.5cm,text={18cm, 25cm},top=2.5cm]{geometry}
+\usepackage{color}
+\usepackage[unicode, colorlinks,hyperindex,plainpages=false,pdftex]{hyperref}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{multirow}
+
+\begin{document}
+
+\begin{center}{\LARGE\textbf{Relabel-to-front algoritmus}}\\[0.2cm]
+\newcommand{\autor}[2]{#1&\texttt{#2@stud.fit.vutbr.cz}\tabularnewline}
+\begin{tabular}{ll}
+    \autor{Marek Višňovský}{xvisno00}
+    \autor{Jan Wozniak}{xwozni00}
+\end{tabular}
+\end{center}
+
+\section{Introduction}
+
+\section{Theoretical Analysis}
+
+\section{Implementation}
+
+
+\section{User Interface}
+Our main goal was to create simple and intuitive, yet powerful user interface. 
+We tried to achieve this by minimization of the number of control elements down 
+to 2 panels, one for graph building purposes and another one for algorithm control.
+
+\subsubsection*{Creating a simple graph}
+Left panel of application's main window serves for graph creation. Users are able 
+to add or remove nodes from pop-up menu, that shows up after right click of the 
+mouse on the desired location. Nodes are represented as black circles with its 
+id displayed inside. Right next to them, there's an indicator of current height 
+of the node, which plays role in algorithm itself.
+
+Right clicking on the node invokes the same pop-up menu, but with more options 
+enabled, such as deletion of selected node, starting edge from that node, selection 
+of this node as source or sink of the graph.
+
+Edges are displayed as lines, with an arrow in the middle pointing in the 
+direction of that edge, as relabel-to-front algorithm works with oriented graphs. 
+Next to this arrow, there are two numbers separated by slash, indicating current 
+flow and capacity of the edge. Edges are created from pop-up menu mentioned above, 
+after right clicking on desired start node and then selection of the destination 
+node (this is done again by clicking with any mouse button on desired node). 
+Loops are not allowed.
+
+%\begin{figure}[H]
+%  \centering
+%  \includegraphics[width=15cm]{pipeline.pdf}
+%  \caption{Schéma JPEG encode pipeline.}
+%  \label{pipeline}
+%\end{figure}
+
+\subsubsection*{Saving and loading graphs}
+Application allows to store and load graphs in GraphML format. This is a widely-used 
+xml format for graph representation. More info about this format can be found here: 
+\url{http://graphml.graphdrawing.org/}. The application can load GraphML files created
+by an application itself, other files must contain definition of additional attributes
+such as x_position, y_position and height for nodes, and capacity for edges. For more
+details, look at the saved file itself, the structure is, thanks to xml format, 
+easily readable. 
+
+\subsubsection*{Running an algorithm}
+To run relabel-to-front algorithm, one must select source and sink nodes first. 
+Source node will be colored green and sink node red. After that, users can run 
+algorithm simply by clicking on the start button in the panel on the right. 
+This will initialize all variables necessary for the algorithm. Then, algorithm 
+continues by simple steps after clicking on the step button. Changes to the 
+graph are highlighted:
+\begin{itemize}
+\item node, which turns yellow, had its height changed in the last step (height 
+number turns to red)
+\item edge, which flow has changed, is highlighted by yellow border, and its 
+flow and capacity marking is written in red
+\end{itemize}
+
+There are steps of the algorithm, when relabel-to-front works with virtual edges,
+which are not visible to the user. Information about these changes (and also 
+about all visible changes) can be found in text area below the control buttons.
+Final flow is displayed here too.
+
+%\begin{figure}[H]
+%  \centering
+%  \includegraphics[width=15cm]{pipeline.pdf}
+%  \caption{Schéma JPEG encode pipeline.}
+%  \label{pipeline}
+%\end{figure}
+
+\section{Conclusion}
+
+
+%
+%
+% LITERATURA
+% ======================
+\newpage
+{%
+    \renewcommand{\refname}{Literature} % Text nadpisu thebibliography.
+    \newcommand{\bi}[4]{\bibitem{#1}\textit{#2.} #3\\{}$<$\url{#4}$>$}%
+    \newcommand{\citdatum}[1][2011-10-08]{$[$cit.~{#1}$]$}%
+%
+\begin{thebibliography}{MM}%
+% Vzor: \bi{label}{Název}{Poznámky.}{http://www.adresa.cz/}%
+\bi{t81}{Recommendation T.81}{\citdatum[2012-12-10]}
+    {http://www.w3.org/Graphics/JPEG/itu-t81.pdf}
+\bibitem{mul}{D. Bařina. \textit{Diskrétní kosínová transformace -- prezentace ke cvičení}. \citdatum[2008-12-08].\\
+    $<$\url{http://www.fit.vutbr.cz/study/course-l.php.cs?id=8766}$>$}
+\bi{wiki}{Wikipedia, the free encyclopedia}{\citdatum[2012-12-10]}
+    {http://en.wikipedia.org/}
+\end{thebibliography}}
+\end{document}
