@@ -17,7 +17,7 @@
 
 \begin{document}
 
-\begin{center}{\LARGE\textbf{Relabel-to-front algoritmus}}\\[0.2cm]
+\begin{center}{\LARGE\textbf{Relabel-to-front algorithm}}\\[0.2cm]
 \newcommand{\autor}[2]{#1&\texttt{#2@stud.fit.vutbr.cz}\tabularnewline}
 \begin{tabular}{ll}
     \autor{Marek Višňovský}{xvisno00}
@@ -32,13 +32,14 @@ IDE.
 
 \section{Theoretical Analysis}
 The Relabel-to-front is quite efficient algorithm that computes a maximal flow in
-oriented graph. It is a special variant of push-relabel, where the algorithm maintains
+oriented graph\cite{wiki}. It is a special variant of push-relabel, where the algorithm maintains
 list of overflowing nodes. The list is scanned as the algorithm proceeds and the
 excess flow in each node is discharged \cite{diz}. 
 
 The main function of the algorithm is \textit{relabel-to-front} which takes three
-arguments, graph \textit{G}, source node \textit{s} and sink node \textit{t}\ref{pseud}.
-The operation \textit{discharge(u)}\ref{dis} is essential core of the algorithm, 
+arguments, graph \textit{G}, source node \textit{s} and sink node \textit{t} as could
+be seen in algorithm \ref{pseud}.
+The operation \textit{discharge(u)} in algorithm \ref{dis} is essential core of the algorithm, 
 takes a node \textit{u} and modifies heights and flow in the graph by chosing
 suitable push and relabel operations to ensure entire excess flow is taken care of.
 If during discharge a node is relabeled, it is moved to the start of the list.
@@ -50,20 +51,41 @@ node's \textit{u} height accordingly.
 
 During initialization height of each node is set to 0 except source, which is set
 to \textit{n}. Flow on all edges is set to 0. Then we push the most possible flow
-on all edges from source and then continue according to the rest of algorithm\ref{pseud}.
+on all edges from source and then continue according to the rest of algorithm \ref{pseud}.
 
-%\begin{algorithm}
-%\caption{Relabel-to-front(G,s,t)}
-%\begin{algorithmic}
-%\If {$i\geq maxval$}
-%    \State $i\gets 0$
-%\Else
-%    \If {$i+k\leq maxval$}
-%        \State $i\gets i+k$
-%    \EndIf
-%\EndIf
-%\end{algorithmic}
-%\end{algorithm}
+\begin{algorithm}
+\caption{Relabel-to-front(G, s, t)}
+\label{pseud}
+\begin{algorithmic}
+\State initialize preflow
+\State initialize node list $L$ containing $V - \{s,t\}$
+\While {$u \neq$ null}
+    \State $u\gets L.get\_next$ 
+    \State $old\_height \gets u.height$
+    \State discharge($u$)
+    \If {$old\_height \leq u.height$}
+        \State $L.set\_first(u)$
+    \EndIf
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Discharge(u)}
+\label{dis}
+\begin{algorithmic}
+\While {$u.excess > 0$}
+    \State $v \gets u.next\_neighbour$
+    \If {$v \neq$ null}
+        \State relabel($u$)
+    \Else
+        \If {$(u,v).residual > 0$ \&\& $u.height > v.height$}
+            \State push($u,v$)
+        \EndIf
+    \EndIf
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
 
 \subsubsection*{Computational Complexity}
 Every discharge operation without relabel advances $u$, the current 
@@ -166,7 +188,10 @@ Final flow is displayed here too.
 \end{figure}
 
 \section{Conclusion}
-
+The application visualizes relabel to front algorithm without any optimalization
+in comprehendable way for a user with basic knowledge of graphs and flow in graphs.
+It allows user to create or import graph and then execute step by step the algorithm
+which produces helpful notes for the user.
 
 %
 %
@@ -180,10 +205,11 @@ Final flow is displayed here too.
 %
 \begin{thebibliography}{MM}%
 % Vzor: \bi{label}{Název}{Poznámky.}{http://www.adresa.cz/}%
+\bi{wiki}{}{Wikipedia -- the free encyclopedia}{\citdatum[2012-12-11]}
+    {http://en.wikipedia.org/wiki/PushE2\%80\%93relabel\_maximum\_flow\_algorithm}
 \bi{diz}{A. Bhusnurmath. }{Applying Convex Optimization Techniques to Energy Minimization Problems in Computer Vision}{\citdatum[2012-12-11]}
     {http://www.cis.upenn.edu/~cjtaylor/PUBLICATIONS/pdfs/BhusnurmathPHD08.pdf}
 \bi{rtf}{E. Mayr, H. Räcke. }{Relabel to front -- Lecture}{\citdatum[2012-12-10]}
     {http://wwwmayr.informatik.tu-muenchen.de/lehre/2011WS/ea/split/sub-Relabel-to-front-single.pdf}
-
 \end{thebibliography}}
 \end{document}
