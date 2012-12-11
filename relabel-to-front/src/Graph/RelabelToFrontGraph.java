@@ -32,7 +32,7 @@ public class RelabelToFrontGraph extends Graph implements Runnable {
         if(e!=null){
             e.set_flow(value);
             listener.change_flow(e, value);
-            if(message!=""){
+            if(!message.equals("")){
                 listener.print_message(message);
             }
             if(yield){
@@ -40,9 +40,12 @@ public class RelabelToFrontGraph extends Graph implements Runnable {
             }
         }
         else{
-            listener.print_message("Change flow on virtual edge " + u_node.get_id() + "->" + v_node.get_id());
-            if(yield){
-                listener.yield();
+            Edge support = get_edge(v_node, u_node);
+            if(support!=null){
+                listener.print_message("Change flow on virtual edge " + u_node.get_id() + "->" + v_node.get_id());
+                if(yield){
+                    listener.yield();
+                }
             }
         }
 
@@ -53,7 +56,7 @@ public class RelabelToFrontGraph extends Graph implements Runnable {
         Node u_node = index[u];
         u_node.set_height(value);
         listener.change_height(u_node, value);
-        if(message!=""){
+        if(!message.equals("")){
             listener.print_message(message);
         }
         if(yield){
