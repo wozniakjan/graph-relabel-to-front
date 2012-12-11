@@ -32,23 +32,70 @@ IDE.
 
 \section{Theoretical Analysis}
 The Relabel-to-front is quite efficient algorithm that computes a maximal flow in
-oriented graph. It is a special variant of push-relabel, where neighbours of a node
-are organized into a linked list \cite{rtf}. 
+oriented graph. It is a special variant of push-relabel, where the algorithm maintains
+list of overflowing nodes. The list is scanned as the algorithm proceeds and the
+excess flow in each node is discharged \cite{diz}. 
 
-\begin{algorithm}
-\caption{Relabel-to-front(G,s,t)}
-\begin{algorithmic}
-\If {$i\geq maxval$}
-    \State $i\gets 0$
-\Else
-    \If {$i+k\leq maxval$}
-        \State $i\gets i+k$
-    \EndIf
-\EndIf
-\end{algorithmic}
-\end{algorithm}
+The main function of the algorithm is \textit{relabel-to-front} which takes three
+arguments, graph \textit{G}, source node \textit{s} and sink node \textit{t}\ref{pseud}.
+The operation \textit{discharge(u)}\ref{dis} is essential core of the algorithm, 
+takes a node \textit{u} and modifies heights and flow in the graph by chosing
+suitable push and relabel operations to ensure entire excess flow is taken care of.
+If during discharge a node is relabeled, it is moved to the start of the list.
+The algorithm then treats the next node in the list and continues the procedure
+until every overflowing node has been discharged.
+Function \textit{push(u, v)} pushes through edge from node \textit{u} to node
+\textit{v} the most excess flow possible. Function \textit{relabel(u)} changes
+node's \textit{u} height accordingly.
+
+During initialization height of each node is set to 0 except source, which is set
+to \textit{n}. Flow on all edges is set to 0. Then we push the most possible flow
+on all edges from source and then continue according to the rest of algorithm\ref{pseud}.
+
+%\begin{algorithm}
+%\caption{Relabel-to-front(G,s,t)}
+%\begin{algorithmic}
+%\If {$i\geq maxval$}
+%    \State $i\gets 0$
+%\Else
+%    \If {$i+k\leq maxval$}
+%        \State $i\gets i+k$
+%    \EndIf
+%\EndIf
+%\end{algorithmic}
+%\end{algorithm}
+
+\subsubsection*{Computational Complexity}
+Every discharge operation without relabel advances $u$, the current 
+node within list $L$. Then if we have $n$ discharge operations without relabel,
+we have the current node $u = null$ and the algorithm terminates. Therefore, the
+number of calls to discharge is at most $n(\#relabels + 1) = O(n^3)$.
+
+A relabel operation at a node is constant time -- increasing label and setting
+current-neighbour. In total we have $O(n^2)$.
+The cost of push operation is at max $O(n^3)$.
+
+Concluding from the informations above the complexity of relabel-to-front algorithm
+is $O(n^3)$ where $n$ is number of nodes \cite{rtf}. 
+
 
 \section{Implementation}
+The program runs in two separate threads, one is GUI and second is relabel to front
+algorithm. Entire project is separated into two packages, \texttt{GUI} and \texttt{Graph}.
+Graph package contains following classes
+\begin{itemize}
+\item \textit{Graph} -- basic representation of simple oriented graph
+\item \textit{Edge} -- representation of edges
+\item \textit{Node} -- representation of nodes
+\item \textit{GraphListener} -- interface for communication between UI
+\item \textit{RelabelToFront} -- class extending graph of relabel to front algorithm implementation
+\end{itemize}
+
+The \texttt{RelabelToFront} stores as protected arrays for flow, capacity, height,
+excess and the list of nodes to discharge. The redundant structure is created for
+easier reinitialization of algorithm, if the user changes the nodes in graph and
+restarts algorithm over again.
+
 
 
 
@@ -128,16 +175,15 @@ Final flow is displayed here too.
 \newpage
 {%
     \renewcommand{\refname}{Literature} % Text nadpisu thebibliography.
-    \newcommand{\bi}[4]{\bibitem{#1}\textit{#2.} #3\\{}$<$\url{#4}$>$}%
+    \newcommand{\bi}[5]{\bibitem{#1}{#2}\textit{#3.} #4\\{}$<$\url{#5}$>$}%
     \newcommand{\citdatum}[1][2011-10-08]{$[$cit.~{#1}$]$}%
 %
 \begin{thebibliography}{MM}%
 % Vzor: \bi{label}{Název}{Poznámky.}{http://www.adresa.cz/}%
-\bi{rtf}{Relabel to front -- Lecture}{\citdatum[2012-12-10]}
+\bi{diz}{A. Bhusnurmath. }{Applying Convex Optimization Techniques to Energy Minimization Problems in Computer Vision}{\citdatum[2012-12-11]}
+    {http://www.cis.upenn.edu/~cjtaylor/PUBLICATIONS/pdfs/BhusnurmathPHD08.pdf}
+\bi{rtf}{E. Mayr, H. Räcke. }{Relabel to front -- Lecture}{\citdatum[2012-12-10]}
     {http://wwwmayr.informatik.tu-muenchen.de/lehre/2011WS/ea/split/sub-Relabel-to-front-single.pdf}
-\bibitem{mul}{D. Bařina. \textit{Diskrétní kosínová transformace -- prezentace ke cvičení}. \citdatum[2008-12-08].\\
-    $<$\url{http://www.fit.vutbr.cz/study/course-l.php.cs?id=8766}$>$}
-\bi{wiki}{Wikipedia, the free encyclopedia}{\citdatum[2012-12-10]}
-    {http://en.wikipedia.org/}
+
 \end{thebibliography}}
 \end{document}
