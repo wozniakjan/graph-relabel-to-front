@@ -1,4 +1,4 @@
-DOC   = dokumentace
+DOC   = documentation
 
 
 doc: $(DOC).tex
